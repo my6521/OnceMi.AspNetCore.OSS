@@ -18,6 +18,7 @@ namespace OnceMi.AspNetCore.OSS
         private readonly Config _config;
         private readonly Auth _auth;
         private readonly HttpManager _http;
+
         private readonly Dictionary<string, string> _regionNameMap = new Dictionary<string, string>()
         {
             {"z0", "华东(CN_East)"},
@@ -27,6 +28,7 @@ namespace OnceMi.AspNetCore.OSS
             {"as0","东南亚(Asia_South)" },
             {"cn-east-2","华东-浙江2" }
         };
+
         private readonly Dictionary<string, string> _regionZoneMap = new Dictionary<string, string>()
         {
             {"CN_East", "z0"},
@@ -36,7 +38,7 @@ namespace OnceMi.AspNetCore.OSS
             {"Asia_South", "as0"},
         };
 
-        public QiniuOSSService(ICacheProvider cache, OSSOptions options) 
+        public QiniuOSSService(ICacheProvider cache, OSSOptions options)
             : base(cache, options)
         {
             _mac = new Mac(this.Options.AccessKey, this.Options.SecretKey);
@@ -48,18 +50,23 @@ namespace OnceMi.AspNetCore.OSS
                 case "cn_east":
                     _config.Zone = Zone.ZONE_CN_East;
                     break;
+
                 case "cn_north":
                     _config.Zone = Zone.ZONE_CN_North;
                     break;
+
                 case "cn_south":
                     _config.Zone = Zone.ZONE_CN_South;
                     break;
+
                 case "us_north":
                     _config.Zone = Zone.ZONE_US_North;
                     break;
+
                 case "asia_south":
                     _config.Zone = Zone.ZONE_AS_Singapore;
                     break;
+
                 default:
                     throw new InvalidOperationException("Incorrect regional configuration. Qiniu oss only supports the following regional configurations：CN_East(华东)/CN_South(华南)/CN_North(华北)/US_North(北美)/Asia_South(东南亚)");
             }
@@ -101,6 +108,7 @@ namespace OnceMi.AspNetCore.OSS
             {
                 case 200:
                     return Task.FromResult(true);
+
                 case 614:
                     throw new BucketExistException($"Bucket '{bucketName}' already exists.");
                 default:
@@ -125,6 +133,7 @@ namespace OnceMi.AspNetCore.OSS
             {
                 case 200:
                     return Task.FromResult(true);
+
                 default:
                     {
                         if (!string.IsNullOrEmpty(hr.Text))
@@ -244,7 +253,7 @@ namespace OnceMi.AspNetCore.OSS
             return Task.FromResult(bucket);
         }
 
-        #endregion
+        #endregion bucket
 
         public Task<List<Item>> ListObjectsAsync(string bucketName, string prefix = null)
         {
@@ -293,8 +302,10 @@ namespace OnceMi.AspNetCore.OSS
             {
                 case 200:
                     return Task.FromResult(true);
+
                 case 612:
                     return Task.FromResult(false);
+
                 default:
                     {
                         if (!string.IsNullOrEmpty(hr.Text))
@@ -342,7 +353,7 @@ namespace OnceMi.AspNetCore.OSS
                 throw new ArgumentNullException(nameof(bucketName));
             }
             objectName = FormatObjectName(objectName);
-            // 上传策略，参见 
+            // 上传策略，参见
             // https://developer.qiniu.com/kodo/manual/put-policy
             PutPolicy putPolicy = new PutPolicy
             {
@@ -426,7 +437,7 @@ namespace OnceMi.AspNetCore.OSS
             throw new Exception("Qiniu not support remove object acl.");
         }
 
-        #endregion
+        #endregion Object acl
 
         public Task<bool> RemoveObjectAsync(string bucketName, string objectName)
         {
@@ -659,6 +670,6 @@ namespace OnceMi.AspNetCore.OSS
             throw new InvalidOperationException("Incorrect regional configuration. Qiniu oss only supports the following regional configurations：CN_East(华东)/CN_South(华南)/CN_North(华北)/US_North(北美)");
         }
 
-        #endregion
+        #endregion private
     }
 }

@@ -4,9 +4,7 @@ using OnceMi.AspNetCore.OSS;
 using Sample.AspNetCore.Mvc.Models;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Sample.AspNetCore.Mvc.Controllers
@@ -15,7 +13,7 @@ namespace Sample.AspNetCore.Mvc.Controllers
     {
         private readonly ILogger _logger;
         public IOSSService _ossService;
-        public const string _bucketName = @"qtest-1213";
+        public const string _bucketName = @"upload/qtest-1213";
 
         public const string _objectFilePath = @"TestFiles/1.jpg";
         public const string _copyObjectDestFilePath = @"/1_copy.jpg";
@@ -113,9 +111,10 @@ namespace Sample.AspNetCore.Mvc.Controllers
             }
         }
 
-        #endregion
+        #endregion Bucket
 
         #region Objects
+
         public async Task<IActionResult> ListObjects()
         {
             try
@@ -392,7 +391,7 @@ namespace Sample.AspNetCore.Mvc.Controllers
             }
         }
 
-        #endregion
+        #endregion Objects
 
         #region 访问权限
 
@@ -651,7 +650,7 @@ namespace Sample.AspNetCore.Mvc.Controllers
             }
         }
 
-        #endregion
+        #endregion 访问权限
 
         public async Task<IActionResult> PresignedGetObject()
         {
@@ -714,6 +713,5 @@ namespace Sample.AspNetCore.Mvc.Controllers
                 });
             }
         }
-
     }
 }

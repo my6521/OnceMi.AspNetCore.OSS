@@ -1,6 +1,3 @@
-using Minio;
-using System;
-
 namespace OnceMi.AspNetCore.OSS
 {
     public enum OSSProvider
@@ -39,10 +36,16 @@ namespace OnceMi.AspNetCore.OSS
         /// 百度云 BOS
         /// </summary>
         BaiduCloud = 6,
+
         /// <summary>
         /// 天翼云 OOS
         /// </summary>
-        Ctyun = 7
+        Ctyun = 7,
+
+        /// <summary>
+        /// 本地文件系统
+        /// </summary>
+        Local = 8,
     }
 
     public class OSSOptions

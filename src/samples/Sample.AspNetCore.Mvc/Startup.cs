@@ -1,17 +1,12 @@
 using FreeRedis;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using OnceMi.AspNetCore.OSS;
 using Sample.AspNetCore.Mvc.CacheProviders;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Sample.AspNetCore.Mvc
 {
@@ -106,6 +101,16 @@ namespace Sample.AspNetCore.Mvc
             {
                 option.Provider = OSSProvider.Ctyun;
                 option.Endpoint = "oos-sdqd.ctyunapi.cn"; //不需要带有协议
+                option.AccessKey = "6********************6";
+                option.SecretKey = "c********************5";
+                option.IsEnableHttps = true;
+                option.IsEnableCache = true;
+            });
+
+            services.AddOSSService("local", option =>
+            {
+                option.Provider = OSSProvider.Local;
+                option.Endpoint = "oss-local.95rj.com"; //不需要带有协议
                 option.AccessKey = "6********************6";
                 option.SecretKey = "c********************5";
                 option.IsEnableHttps = true;

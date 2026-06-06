@@ -18,6 +18,7 @@ namespace OnceMi.AspNetCore.OSS
     public class QCloudOSSService : BaseOSSService, IQCloudOSSService
     {
         private readonly CosXml _client = null;
+
         public CosXml Context
         {
             get
@@ -26,7 +27,7 @@ namespace OnceMi.AspNetCore.OSS
             }
         }
 
-        public QCloudOSSService(ICacheProvider cache, OSSOptions options) 
+        public QCloudOSSService(ICacheProvider cache, OSSOptions options)
             : base(cache, options)
         {
             CosXmlConfig config = new CosXmlConfig.Builder()
@@ -199,6 +200,7 @@ namespace OnceMi.AspNetCore.OSS
                             case "read":
                                 isPublicRead = true;
                                 break;
+
                             case "write":
                                 isPublicWrite = true;
                                 break;
@@ -226,7 +228,7 @@ namespace OnceMi.AspNetCore.OSS
             }
         }
 
-        #endregion
+        #endregion bucekt
 
         #region Object
 
@@ -649,7 +651,7 @@ namespace OnceMi.AspNetCore.OSS
             }
 
             PutObjectACLRequest request = new PutObjectACLRequest(bucketName, objectName);
-            //设置私有读写权限 
+            //设置私有读写权限
             request.SetCosACL(acl);
             PutObjectACLResult result = _client.PutObjectACL(request);
             return Task.FromResult(result.IsSuccessful());
@@ -717,6 +719,7 @@ namespace OnceMi.AspNetCore.OSS
                             case "read":
                                 isPublicRead = true;
                                 break;
+
                             case "write":
                                 isPublicWrite = true;
                                 break;
@@ -752,7 +755,7 @@ namespace OnceMi.AspNetCore.OSS
             }
             objectName = FormatObjectName(objectName);
             PutObjectACLRequest request = new PutObjectACLRequest(ConvertBucketName(bucketName), objectName);
-            //设置私有读写权限 
+            //设置私有读写权限
             request.SetCosACL("default");
             PutObjectACLResult result = _client.PutObjectACL(request);
             if (result.IsSuccessful())
@@ -762,7 +765,7 @@ namespace OnceMi.AspNetCore.OSS
             throw new Exception("Remove object acl failed.");
         }
 
-        #endregion
+        #endregion Object
 
         #region private
 
@@ -771,6 +774,6 @@ namespace OnceMi.AspNetCore.OSS
             return $"{input}-{Options.Endpoint}";
         }
 
-        #endregion
+        #endregion private
     }
 }
