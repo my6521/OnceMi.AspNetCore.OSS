@@ -92,15 +92,15 @@ namespace OnceMi.AspNetCore.OSS
             }
             catch (UnauthorizedAccessException ex)
             {
-                throw ex;
+                throw new OSSException(OSSErrorCode.InvalidAccess.ToOSSError(), ex);
             }
             catch (ArgumentException ex)
             {
-                throw ex;
+                throw new OSSException(OSSErrorCode.InvalidBlobName.ToOSSError(), ex);
             }
             catch (DirectoryNotFoundException ex)
             {
-                throw ex;
+                throw new OSSException(OSSErrorCode.ContainerNotFound.ToOSSError(), ex);
             }
             catch (NotSupportedException ex)
             {
