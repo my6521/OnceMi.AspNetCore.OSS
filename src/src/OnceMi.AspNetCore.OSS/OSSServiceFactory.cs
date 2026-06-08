@@ -2,6 +2,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
+using System.Collections.Concurrent;
 
 namespace OnceMi.AspNetCore.OSS
 {
@@ -11,6 +12,7 @@ namespace OnceMi.AspNetCore.OSS
         private readonly ICacheProvider _cache;
         private readonly ILoggerFactory logger;
         private readonly IServiceProvider serviceProvider;
+        private readonly ConcurrentDictionary<string, IOSSService> _serviceCache = new ConcurrentDictionary<string, IOSSService>(StringComparer.OrdinalIgnoreCase);
 
         public OSSServiceFactory(IOptionsMonitor<OSSOptions> optionsMonitor
             , ICacheProvider provider
@@ -29,19 +31,61 @@ namespace OnceMi.AspNetCore.OSS
 
         public IOSSService Create(string name)
         {
-            #region ≤Œ ˝—È÷§
-
             if (string.IsNullOrEmpty(name))
             {
                 name = DefaultOptionName.Name;
             }
             var options = optionsMonitor.Get(name);
-            if (options == null ||
-                (options.Provider == OSSProvider.Invalid
+            return Create(options);
+        }
+
+        public IOSSService Create(OSSOptions options)
+        {
+            ValidateOptions(options);
+            return CreateService(options);
+        }
+
+        public IOSSService GetOrCreate(string name, OSSOptions options = null)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                name = DefaultOptionName.Name;
+            }
+
+            return _serviceCache.GetOrAdd(name, key =>
+            {
+                // ‰ºòÂÖà‰ΩøÁî®‰º†ÂÖ•ÁöÑ optionsÔºåÂÖ∂Ê¨°‰ªé IOptionsMonitor Ëé∑ÂèñÂëΩÂêçÈÖçÁΩÆ
+                if (options != null && options.Provider != OSSProvider.Invalid)
+                {
+                    ValidateOptions(options);
+                    return CreateService(options);
+                }
+
+                var monitoredOptions = optionsMonitor.Get(key);
+                if (monitoredOptions == null ||
+                    (monitoredOptions.Provider == OSSProvider.Invalid
+                    && string.IsNullOrEmpty(monitoredOptions.Endpoint)
+                    && string.IsNullOrEmpty(monitoredOptions.SecretKey)
+                    && string.IsNullOrEmpty(monitoredOptions.AccessKey)))
+                {
+                    throw new ArgumentException($"Cannot get OSS option by name '{key}'. Ensure it is registered via AddOSSService or provide valid OSSOptions.");
+                }
+
+                ValidateOptions(monitoredOptions);
+                return CreateService(monitoredOptions);
+            });
+        }
+
+        private void ValidateOptions(OSSOptions options)
+        {
+            if (options == null)
+                throw new ArgumentNullException(nameof(options), "OSSOptions can not null.");
+
+            if (options.Provider == OSSProvider.Invalid
                 && string.IsNullOrEmpty(options.Endpoint)
                 && string.IsNullOrEmpty(options.SecretKey)
-                && string.IsNullOrEmpty(options.AccessKey)))
-                throw new ArgumentException($"Cannot get option by name '{name}'.");
+                && string.IsNullOrEmpty(options.AccessKey))
+                throw new ArgumentException($"Invalid OSSOptions, provider is Invalid and missing endpoint/accessKey/secretKey.");
 
             if (options.Provider == OSSProvider.Invalid)
                 throw new ArgumentNullException(nameof(options.Provider));
@@ -62,9 +106,10 @@ namespace OnceMi.AspNetCore.OSS
                     throw new ArgumentNullException(nameof(options.Region), "When your provider is Minio/QCloud/Qiniu/HuaweiCloud, region can not null.");
                 }
             }
+        }
 
-            #endregion ≤Œ ˝—È÷§
-
+        private IOSSService CreateService(OSSOptions options)
+        {
             switch (options.Provider)
             {
                 case OSSProvider.Aliyun:

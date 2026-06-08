@@ -5,13 +5,13 @@
 		<Description>ASP.NET Core对象储存扩展包，支持Minio自建对象储存、阿里云OSS、腾讯云COS、七牛云Kodo、华为云OBS、百度云BOS、天翼云OOS经典版。</Description>
 		<Company>OnceMi</Company>
 		<Authors>OnceMi</Authors>
-		<Version>1.3.2</Version>
+		<Version>1.3.3</Version>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<RepositoryUrl>https://github.com/my6521/OnceMi.AspNetCore.OSS</RepositoryUrl>
 		<PackageProjectUrl>https://github.com/my6521/OnceMi.AspNetCore.OSS</PackageProjectUrl>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<RepositoryType>Github</RepositoryType>
-		<PackageReleaseNotes>1. 添加本地文件存储</PackageReleaseNotes>
+		<PackageReleaseNotes>1. 支持按配置创建IOSSService</PackageReleaseNotes>
 		<AssemblyName>WWB.AspNetCore.OSS</AssemblyName>
 	</PropertyGroup>
 
